@@ -28,5 +28,5 @@ This plugin works with node projects with file extensions '.js', '.ts'. In the p
 }
 ```
 
-You should open project in the che-theia and open any '.js' or '.ts' file. Change something in the file. Plugin analizes file content.
-If file doesn't contains MIT license header, than plugin generate it on the top of the file.
+Open project in the che-theia and open any '.js' or '.ts' file. Change something in the file. Plugin analizes file content.
+In case if file doesn't contains MIT license header, than plugin generate it on the top of the file.
