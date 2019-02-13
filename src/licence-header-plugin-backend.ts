@@ -54,11 +54,10 @@ export function start(context: theia.PluginContext) {
 
             if (workspaceFolderUri) {
                 const packageJsonPath = path.resolve(workspaceFolderUri.fsPath, PACKAGE_JSON);
-                console.log(packageJsonPath);
                 if (fs.existsSync(packageJsonPath)) {
                     const packageJson = require(packageJsonPath);
 
-                    if (packageJson.license && isSupported(packageJson.license, SUPPORTED_LICENCE_HEADERS)) {
+                    if (packageJson.license && isSupportedValue(packageJson.license, SUPPORTED_LICENCE_HEADERS)) {
                         const document = getDocument(fileSaveEvent.document.uri);
                         if (document) {
                             const fileText = document.getText();
@@ -67,28 +66,27 @@ export function start(context: theia.PluginContext) {
                             const mitLicenceHeader = new LicenseHeader(packageJson.author, MIT_LICENSE_HEADER_CONTENT, MIT_LICENSE_HEDER_REGEXP);
 
                             if (!mitLicenceHeader.getRegExpr().test(fileText)) {
-                                const licenceTextEdit = theia.TextEdit.insert(document.lineAt(0).range.start, mitLicenceHeader.getHeader());
-                                textEdits.push(licenceTextEdit);
+                                const licenceHeaderEdit = theia.TextEdit.insert(document.lineAt(0).range.start, mitLicenceHeader.getHeader());
+                                textEdits.push(licenceHeaderEdit);
                             }
                             resolve(textEdits);
                         }
                     }
                 }
             }
-            resolve([]);
+            resolve();
         });
-
 
         fileSaveEvent.waitUntil(fileContentPromise);
     }));
 }
 
-function isSupported(item: string, supportedElems: string[]): boolean {
+function isSupportedValue(item: string, supportedElems: string[]): boolean {
     return supportedElems.findIndex((supportedElem => supportedElem === item)) >= 0;
 }
 
 function getDocument(fileUri: theia.Uri): theia.TextDocument | undefined {
-    return theia.workspace.textDocuments.find((document) => {
+    return theia.workspace.textDocuments.find((document: theia.TextDocument) => {
         if (document.uri === fileUri) {
             return true;
         }
@@ -96,11 +94,5 @@ function getDocument(fileUri: theia.Uri): theia.TextDocument | undefined {
     });
 }
 
-// function sleep(milliseconds: number = 0): Promise<void> {
-//     return new Promise(resolve => setTimeout(resolve, milliseconds));;
-// }
-
-
 export function stop() {
 }
-
